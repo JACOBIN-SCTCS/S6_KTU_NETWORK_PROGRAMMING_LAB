@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-
 int main()
 {
 	int pid1 ,pid2; 
