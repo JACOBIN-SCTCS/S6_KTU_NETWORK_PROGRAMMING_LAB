@@ -1,4 +1,4 @@
-// Jacob James 	K (31) SERVER PROCESS FOR SHARED MEMORY
+ // Jacob James 	K (31) SERVER PROCESS FOR SHARED MEMORY
 #include<stdio.h>
 #include<sys/shm.h>
 void main()
