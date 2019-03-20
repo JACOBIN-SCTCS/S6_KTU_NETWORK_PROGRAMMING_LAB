@@ -40,7 +40,7 @@ void main()
 	msgsnd(msgid,&msg3,sizeof(msg3),0);
 	printf("\nSERVER HAS SEND DATA \n");
 	//DETACH SHARED MEMORY
-	msgctl(msgid,IPC_RMID,NULL);
+	//msgctl(msgid,IPC_RMID,NULL);
 	//return 0;
 
 }

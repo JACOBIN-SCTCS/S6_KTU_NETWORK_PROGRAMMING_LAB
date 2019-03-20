@@ -29,7 +29,7 @@ int main()
 	msgrcv(msgid,&msg3,sizeof(msg3),3,0);
 	printf("Client has got the message %s\n",msg3.message);
 	// DETACH MESSSAGE QUEUE
-	msgctl(msgid,IPC_RMID,NULL);
+	//msgctl(msgid,IPC_RMID,NULL);
 
 	return 0;
 
