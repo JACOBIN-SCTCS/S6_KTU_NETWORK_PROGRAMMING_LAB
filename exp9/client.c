@@ -5,6 +5,7 @@
 #include<stdlib.h>
 #include<netinet/in.h>
 #include<sys/types.h>
+#include<unistd.h>
 
 void main()
 {
@@ -24,12 +25,12 @@ void main()
 
 
 	//CONNECT TO SOCKET
-	k=connect(sockfd,(struct sockaddr*)&client,sizeof(client));
-	if(k==-1)
-	{
-		printf("Error connecting\n");
-		exit(0);
-	}
+       //	k=connect(sockfd,(struct sockaddr*)&client,sizeof(client));
+	//if(k==-1)
+	///{
+	//	printf("Error connecting\n");
+	//	exit(0);
+	//}
 
 	//READING THE MESSAGE FROM THE CLIENT
 	printf("Enter message to send\n");

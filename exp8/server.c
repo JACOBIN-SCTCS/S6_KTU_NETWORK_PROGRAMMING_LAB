@@ -47,7 +47,6 @@ void main()
 	acc_packet = accept(sock_desc,(struct sockaddr*)&cli , &len);
 
 	read(acc_packet,buffer,sizeof(buffer));
-
 	//printing message got from client
 	printf("\nSERVER HAS GOT MESSAGE=%s FROM CLIENT\n",buffer);
 
