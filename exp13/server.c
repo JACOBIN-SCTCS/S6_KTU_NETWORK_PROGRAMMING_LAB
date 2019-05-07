@@ -1,65 +1,100 @@
 #include<stdio.h>
-#include<fcntl.h>
-#include<stdlib.h>
 #include<sys/socket.h>
+#include<stdlib.h>
+#include<string.h>
 #include<netinet/in.h>
+#include<unistd.h>
+#include<fcntl.h>
+#include<sys/stat.h>
 #include<sys/sendfile.h>
 
-
-void handlerror(int k)
+void error_function(int k)
 {
 	if(k==-1)
 	{
-	printf("Error \n");
-	exit(0);
+		printf("\n ERROR\n");
+		exit(0);
 	}
 }
-
 
 void main()
 {
 	int sockfd;
-	struct sockaddr_in temp ,server;
+	struct sockaddr_in serv , temp ;
+	int tmp;
 	struct stat obj;
+	int len,k ;
+        int choice; 
+	char rec[100];	
+	char length[100];
 	char buf[100];
-	char command[100];
-	int k,filehandle;
-	int len;
-	int size;
-	int i=0;
-	int sock2;
+	int filehandle;
+	char filename[30];
 
 	sockfd= socket(AF_INET,SOCK_STREAM,0);
-	handlerror(sockfd);
+	error_function(sockfd);
+	
+	memset(&serv,0,sizeof(serv));
+	serv.sin_addr.s_addr = INADDR_ANY;
+	serv.sin_family=AF_INET;
+	serv.sin_port=3000;
 
-	temp.sin_port=3000;
-	temp.sin_addr.s_addr =	INADDR_ANY;
-	temp.sin_family=AF_INET;
+	if(bind(sockfd,(struct sockaddr*)&serv, sizeof(serv))==-1)
+	{
+		printf("Error binding\n");
 
-	k =bind(sockfd,(struct sockaddr*)&temp,sizeof(temp));
-	handlerror(k);
+		exit(0);
+	}
+	if(listen(sockfd,5) ==-1)
+	{
+		printf("Error listening\n");
+		exit(0);
+	}
 
-	k =listen(sockfd,5);
-	handlerror(k);
 
-	len =sizeof(server);
+	len =sizeof(temp);
+	tmp =accept(sockfd,(struct sockaddr*)&temp,&len);
+	error_function(k);
 
-	sock2= accept(sockfd,(struct sockaddr*)&server,&len);
 	while(1)
 	{
-		recv(sock2,buf,100,0);
-		sscanf(command,"%s",buf);
-		if(!strcmp(command,"LIST"))
+		k=recv(tmp,buf,100,0);
+		error_function(k);
+	        if(strcmp(buf,"LIST")==0)
 		{
-			system("ls -al >  temp.txt");
-			i=0;
-			stat("temp.txt", &obj);
-			size=obj.st_size;
-			send(sock2 , &size,sizeof(int),0);
-			filehandle = open("temp.txt",O_RDONLY);
-			sendfile(sock2,filehandle,NULL,size);
+			system("ls -al > list.txt");
+			filehandle = open("list.txt" , O_RDONLY);
+			stat("list.txt",&obj);
+			sprintf(length,"%d",(int) obj.st_size);
+			k =send(tmp,length,strlen(length),0);
+			error_function(k);
+			k= sendfile(tmp,filehandle,NULL,obj.st_size);
+
+			
 		}
+		else if(strcmp(buf,"LOAD")==0)
+		{
+			k =recv(tmp,buf,100,0);
+			strcpy(filename,buf);
+			stat(filename,&obj);
+			filehandle = open(filename,O_RDONLY);
+			if(filehandle==-1)
+			{
+				printf("NOO SUCH FILE\n");
+				exit(0);
+			}
+			sprintf(length,"%d",(int)obj.st_size);
+			printf("\n %s\n",length);
+			k=send(tmp,length,strlen(length),0);
+			sendfile(tmp,filehandle,NULL,obj.st_size);
+
+		
+		}
+		break;
+		
 	}
-	close(sock2);
+
+	close(sockfd);
+
 }
 
